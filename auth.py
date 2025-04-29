@@ -40,7 +40,12 @@ def has_special_chars(string):
         return True
 
 def get_google_provider_config():
-    return requests.get(GOOGLE_DISCOVERY_URL, timeout=30).json()
+    try:
+        return requests.get(GOOGLE_DISCOVERY_URL, timeout=30).json()
+    except:
+        # In case of error, return empty dict to prevent crashes
+        flash("Could not connect to Google authentication service", "danger")
+        return {"authorization_endpoint": "", "token_endpoint": "", "userinfo_endpoint": ""}
 
 # New functions for cookie authentication
 def generate_auth_token():
@@ -124,6 +129,11 @@ def login():
             session['profilePic'] = user_data['profilePic']
             if user_data['CustomPfp']:
                 session['CustomPfp'] = bool(user_data['CustomPfp'])
+            
+            # Redirect to next URL if it exists in session
+            next_url = session.pop('next', None)
+            if next_url:
+                return redirect(next_url)
             return redirect(url_for('home'))
     
     if 'user_id' in session:
@@ -152,14 +162,29 @@ def login():
                 
             # Create response with cookie
             flash("Login successful", 'success')
-            response = redirect(url_for('home'))
             
-            # Set cookie expiry based on remember_me (if they selected it on or not)
-            if remember_me:
-                response.set_cookie('.ROLSASECURITY', auth_cookie, max_age=COOKIE_MAX_AGE, httponly=True, samesite='Lax')
+            # Redirect to next URL if it exists in session
+            next_url = session.pop('next', None)
+            if next_url:
+                response = redirect(next_url)
             else:
-                response.set_cookie('.ROLSASECURITY', auth_cookie, httponly=True, samesite='Lax')
+                response = redirect(url_for('home'))
+            
+            # Set cookie options based on environment
+            cookie_options = {
+                'httponly': True, 
+                'samesite': 'Lax'
+            }
+            
+            # Only set secure flag in production
+            if os.environ.get('FLASK_ENV') == 'production':
+                cookie_options['secure'] = True
+            
+            # Set cookie expiry based on remember_me
+            if remember_me:
+                cookie_options['max_age'] = COOKIE_MAX_AGE
                 
+            response.set_cookie('.ROLSASECURITY', auth_cookie, **cookie_options)
             return response
         else:
             flash("Incorrect username or password", 'danger')
