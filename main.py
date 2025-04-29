@@ -501,7 +501,7 @@ def check_consultation_status():
         return jsonify({"has_approved_consultation": approved_consultation is not None})
     except Exception as e:
         return jsonify({"has_approved_consultation": False, "error": str(e)}), 500
-
+# for hosting purposes, this function is used to run the app on a specific port and host
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000) 
 
