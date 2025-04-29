@@ -503,9 +503,9 @@ def about_us():
     return render_template("AboutUs.html")
 
 #whenever the user gets an error instead of showing werkzeug error page or something that can expose our code, it will jsut show our 404 paage
-@app.errorhandler(Exception)
+'''@app.errorhandler(Exception)
 def handle_error(e):
-    return render_template('404.html', error=str(e)), 500
+    return render_template('404.html', error=str(e)), 500'''
 
 @app.route('/404')
 def error_404():
