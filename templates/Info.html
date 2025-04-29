@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="info-container">
+    <h1 class="info-title">What we offer</h1>
+    <p class="subtitle">We at ROLSA provide you with trustworthy and reliable green energy solutions as well as helping you be more eco friendly</p>
+    
+    <div class="info-content">
+        <div class="info-card">
+            <h3>Solar Panel services</h3>
+            <p>Installation, maintenance, and consultation services for solar panel systems.</p>
+            <img src="{{url_for('static',filename='images/solar_panel.jpg')}}" alt="Solar Panel" class="info-image">
+            <a href="/booking" class="service-cta">Schedule a Consultation</a>
+            <p class="additional-info"><a href="{{url_for('contact_us')}}" class="AS-ContantLink">Contact Us</a> for more details on our services.</p>  
+        </div>
+
+        <div class="info-card">
+            <h3>Electric Vehicle charging stations</h3>
+            <p>Installation of charging stations for electric vehicles, including setup and maintenance.</p>
+            <img src="{{url_for('static',filename='images/evc.jpg')}}" alt="Electric Vehicle Charging Station" class="info-image">
+            <a href="/booking" class="service-cta">Schedule a Consultation</a>
+            <p class="additional-info"><a href="{{url_for('contact_us')}}" class="AS-ContantLink">Contact Us</a> for more details on our services.</p>  
+        </div>
+
+        <div class="info-card">
+            <h3>Smart Home systems</h3>
+            <p>Installation, maintenance, and consultation services for smart home systems</p>
+            <img src="{{url_for('static',filename='images/smarthome.jpg')}}" alt="Smart Home" class="info-image">
+            <a href="/booking" class="service-cta">Schedule a Consultation</a>
+            <p class="additional-info"><a href="{{url_for('contact_us')}}" class="AS-ContantLink">Contact Us</a> for more details on our services.</p>  
+        </div>
+
+        <div class="info-card">
+            <h3>Carbon Footprint Calculator</h3>
+            <p>This is a tool to check your carbon footprint and learn how to reduce it.</p>
+            <img src="{{url_for('static',filename='images/cfc.jpg')}}" alt="Carbon Footprint Calculator" class="info-image">
+            <a href="/footprint" class="service-cta">Check it out</a>
+        </div>
+
+        <div class="info-card">
+            <h3>Energy Usage Tracker</h3>
+            <p>This is a tool we provide to allow you to check your energy usage and track it overtime.</p>
+            <img src="{{url_for('static',filename='images/eut.jpg')}}" alt="Energy Usage Tracker" class="info-image">
+            <a href="/track" class="service-cta">Try it for yourself</a>
+        </div>
+
+        <div class="info-card">
+            <h3>Augmented Reality</h3>
+            <p>This is a tool we provide that allows you to see how solar panels would look on your house.</p>
+            <img src="{{url_for('static',filename='images/AR.jpg')}}" alt="Augmented Reality" class="info-image">
+            <a href="#" class="disabled-button" role="button">Coming soon...</a>
+        
+        </div>
+    </div>
+</div>
+
+<style>
+ .info-container {
+        max-width: 1200px;
+        margin: 80px auto 50px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .info-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    .info-card {
+        flex: 1 1 calc(33.333% - 30px);
+        max-width: calc(33.333% - 30px);
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    .info-card h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+
+    .info-image {
+        max-width: 100%;
+        height: auto;
+        margin: 15px 0;
+        border-radius: 6px;
+        flex-grow: 1;
+        object-fit: cover;
+    }
+
+    .service-cta {
+        display: block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 4px;
+        margin: 15px 0;
+        transition: background-color 0.3s;
+    }
+
+    .service-cta:hover {
+        background-color: #45a049;
+    }
+
+    .disabled-button {
+        display: block;
+        background-color: #e0e0e0;
+        color: #9e9e9e;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 4px;
+        margin: 15px 0;
+        cursor: not-allowed;
+    }
+
+    .additional-info {
+        margin-top: auto;
+        font-size: 0.9em;
+    }
+</style>
+
+{% endblock %}

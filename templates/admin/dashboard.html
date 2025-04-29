@@ -1,0 +1,114 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <div class="header-actions">
+            <a href="{{ url_for('admin_availability') }}" class="btn btn-primary">Manage Availability</a>
+            <a href="{{ url_for('auth.admin_logout') }}" class="btn btn-primary" style="background-color: #9CA3AF;">Logout</a>
+        </div>
+    </div>
+    
+    <div class="admin-tabs">
+        <a href="#consultations" class="active" onclick="showTab('consultations', this)">Consultations</a>
+        <a href="#installations" onclick="showTab('installations', this)">Installations</a>
+    </div>
+    
+    <div id="consultations" class="admin-panel">
+        <h2>Pending Consultation Bookings</h2>
+        <div class="booking-list">
+            {% if pending_consultations %}
+                {% for booking in pending_consultations %}
+                <div class="booking-item" id="consultation-{{ booking.consultation_id }}">
+                    <div class="booking-info">
+                        <h3>{{ booking.firstname }} ({{ booking.email }})</h3>
+                        <p><strong>Date:</strong> {{ booking.booking_date }} at {{ booking.booking_time }}</p>
+                        <p><strong>Reason:</strong> {{ booking.reason }}</p>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="approve-btn" onclick="handleBooking('consultation', '{{ booking.consultation_id }}', 'approve')">Approve</button>
+                        <button class="reject-btn" onclick="handleBooking('consultation', '{{ booking.consultation_id }}', 'reject')">Reject</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No pending consultation bookings.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div id="installations" class="admin-panel" style="display: none;">
+        <h2>Pending Installation Bookings</h2>
+        <div class="booking-list">
+            {% if pending_installations %}
+                {% for booking in pending_installations %}
+                <div class="booking-item" id="installation-{{ booking.installation_id }}">
+                    <div class="booking-info">
+                        <h3>{{ booking.firstname }} ({{ booking.email }})</h3>
+                        <p><strong>Date:</strong> {{ booking.booking_date }} at {{ booking.booking_time }}</p>
+                        <p><strong>Address:</strong> {{ booking.address }}</p>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="approve-btn" onclick="handleBooking('installation', '{{ booking.installation_id }}', 'approve')">Approve</button>
+                        <button class="reject-btn" onclick="handleBooking('installation', '{{ booking.installation_id }}', 'reject')">Reject</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No pending installation bookings.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="nav-item">
+    <a href="{{ url_for('admin_messages') }}" class="nav-link">
+        User Messages
+    </a>
+</div>
+
+<script>
+    function showTab(tabId, element) {
+        // Hide all panels
+        document.querySelectorAll('.admin-panel').forEach(panel => {
+            panel.style.display = 'none';
+        });
+        
+        // Show the selected panel
+        document.getElementById(tabId).style.display = 'block';
+        
+        // Update active tab
+        document.querySelectorAll('.admin-tabs a').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        element.classList.add('active');
+    }
+    
+    function handleBooking(type, id, action) {
+        if (!confirm(`Are you sure you want to ${action} this booking?`)) {
+            return;
+        }
+        
+        fetch(`/admin/booking/${type}/${id}/${action}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the booking item from display
+                document.getElementById(`${type}-${id}`).style.display = 'none';
+            } else {
+                alert(`Failed to ${action} booking: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(`An error occurred while trying to ${action} the booking.`);
+        });
+    }
+</script>
+{% endblock %}

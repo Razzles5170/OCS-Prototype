@@ -1,0 +1,422 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<div class="booking-container">
+    <h1 class="page-title">Book Our Services</h1>
+    
+    <div class="booking-tabs">
+        <div class="tab-links">
+            <a href="#" id="consultation-tab" class="tab-link active" onclick="showTab('consultation')">Consultation</a>
+            <a href="#" id="installation-tab" class="tab-link" onclick="showTab('installation')">Installation</a>
+        </div>
+    </div>
+    
+    <div id="consultation-panel" class="booking-panel active">
+        <div class="panel-info">
+            <h2>Consultation</h2>
+            <p>Book a consultation to discuss your energy needs and to see how we could help you.</p>
+        </div>
+        
+        <form id="consultation-form" action="{{ url_for('book_consultation') }}" method="POST">
+            <div class="form-group">
+                <label for="consultation-date">Select a Date:</label>
+                <input type="date" id="consultation-date" name="date" min="{{ today }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="consultation-time">Select a Time:</label>
+                <select id="consultation-time" name="time" required>
+                    <option value="" disabled selected>Select a date first</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="consultation-reason">Reason for Consultation:</label>
+                <textarea id="consultation-reason" name="reason" rows="3" placeholder="" required></textarea>
+            </div>
+            
+            <button type="submit" id="submit-consultation" class="submit-btn">Book Consultation</button>
+        </form>
+    </div>
+    
+    <div id="installation-panel" class="booking-panel">
+        <div class="panel-info">
+            <h2>Installation</h2>
+            <p>Schedule an installation</p>
+        </div>
+        
+        <div id="consultation-required-message" class="consultation-required">
+            <div class="notice-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="notice-content">
+                <h3>Consultation Required</h3>
+                <p>You need to complete a consultation before scheduling an installation. </p>
+                <button onclick="showTab('consultation')" class="secondary-btn">Book a Consultation First</button>
+            </div>
+        </div>
+        
+        <form id="installation-form" action="{{ url_for('book_installation') }}" method="POST">
+            <div class="form-group">
+                <label for="installation-date">Select a Date:</label>
+                <input type="date" id="installation-date" name="date" min="{{ today }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="installation-time">Select a Time:</label>
+                <select id="installation-time" name="time" required>
+                    <option value="" disabled selected>Select a date first</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="installation-address">Installation Address:</label>
+                <textarea id="installation-address" name="address" rows="3" placeholder="Enter the full address for the installation" required></textarea>
+            </div>
+            
+            <button type="submit" id="submit-installation" class="submit-btn">Schedule Installation</button>
+        </form>
+    </div>
+    
+    <div id="booking-success" class="booking-message success" style="display: none;">
+        <div class="message-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="message-content">
+            <h3>Booking Successful!</h3>
+            <p>Your booking request has been submitted successfully. After the meeting we will either confirm or deny your access to an installation.</p>
+            <a href="{{ url_for('mybookings') }}" class="view-bookings-btn">View My Bookings</a>
+        </div>
+    </div>
+    
+    <div id="booking-error" class="booking-message error" style="display: none;">
+        <div class="message-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="message-content">
+            <h3>Booking Error</h3>
+            <p id="error-message">There was a problem processing your booking. Please try again.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .booking-container {
+        max-width: 900px;
+        margin: 80px auto 50px;
+        padding: 20px;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        color: #1F2937;
+        text-align: center;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #4096F6;
+    }
+    
+    .booking-tabs {
+        margin-bottom: 30px;
+    }
+    
+    .tab-links {
+        display: flex;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .tab-link {
+        padding: 15px 25px;
+        color: #4B5563;
+        text-decoration: none;
+        font-weight: 500;
+        position: relative;
+        transition: color 0.3s ease;
+    }
+    
+    .tab-link:hover {
+        color: #1F2937;
+    }
+    
+    .tab-link.active {
+        color: #4096F6;
+    }
+    
+    .tab-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #4096F6;
+    }
+    
+    .tab-link.disabled {
+        color: #9CA3AF;
+        cursor: not-allowed;
+    }
+    
+    .booking-panel {
+        display: none;
+        background-color: #F9FAFB;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .booking-panel.active {
+        display: block;
+    }
+    
+    .panel-info {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .panel-info h2 {
+        font-size: 1.5rem;
+        color: #1F2937;
+        margin-bottom: 8px;
+    }
+    
+    .panel-info p {
+        color: #6B7280;
+        line-height: 1.5;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #4B5563;
+    }
+    
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #D1D5DB;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #1F2937;
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    .submit-btn {
+        background-color: #4096F6;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .submit-btn:hover {
+        background-color: #2E81DF;
+    }
+    
+    .submit-btn:disabled {
+        background-color: #9CA3AF;
+        cursor: not-allowed;
+    }
+    
+    .booking-message {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .booking-message.success {
+        background-color: #D1FAE5;
+        border: 1px solid #A7F3D0;
+    }
+    
+    .booking-message.error {
+        background-color: #FEE2E2;
+        border: 1px solid #FECACA;
+    }
+    
+    .message-icon {
+        margin-right: 15px;
+        font-size: 24px;
+    }
+    
+    .booking-message.success .message-icon {
+        color: #059669;
+    }
+    
+    .booking-message.error .message-icon {
+        color: #DC2626;
+    }
+    
+    .message-content h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .booking-message.success .message-content h3 {
+        color: #065F46;
+    }
+    
+    .booking-message.error .message-content h3 {
+        color: #B91C1C;
+    }
+    
+    .message-content p {
+        margin: 0 0 15px;
+        color: #4B5563;
+    }
+    
+    .view-bookings-btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #059669;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .view-bookings-btn:hover {
+        background-color: #047857;
+    }
+    
+    .consultation-required {
+        display: flex;
+        align-items: flex-start;
+        background-color: #FEF3C7;
+        border: 1px solid #FDE68A;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .notice-icon {
+        margin-right: 15px;
+        font-size: 24px;
+        color: #92400E;
+    }
+    
+    .notice-content h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+        color: #92400E;
+    }
+    
+    .notice-content p {
+        margin-bottom: 15px;
+        color: #78350F;
+    }
+    
+    .secondary-btn {
+        padding: 8px 16px;
+        background-color: #92400E;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .secondary-btn:hover {
+        background-color: #78350F;
+    }
+    
+    .booking-error {
+        background-color: #FEE2E2;
+        color: #B91C1C;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-weight: 500;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @media (max-width: 768px) {
+        .tab-links {
+            flex-direction: column;
+            border-bottom: none;
+        }
+        
+        .tab-link {
+            padding: 12px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .tab-link.active::after {
+            display: none;
+        }
+        
+        .tab-link.active {
+            background-color: #EFF6FF;
+        }
+        
+        .consultation-required {
+            flex-direction: column;
+        }
+        
+        .notice-icon {
+            margin-bottom: 10px;
+            margin-right: 0;
+        }
+    }
+</style>
+
+<script>
+    function showTab(tabId) {
+        // Check if installation tab is being requested while disabled
+        if (tabId === 'installation') {
+            const installationTab = document.getElementById('installation-tab');
+            if (installationTab.classList.contains('disabled')) {
+                return;
+            }
+        }
+        
+        // Update active tab
+        document.querySelectorAll('.tab-link').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.getElementById(`${tabId}-tab`).classList.add('active');
+        
+        // Update active panel
+        document.querySelectorAll('.booking-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+        document.getElementById(`${tabId}-panel`).classList.add('active');
+        
+        // Hide any messages when switching tabs
+        document.getElementById('booking-success').style.display = 'none';
+        document.getElementById('booking-error').style.display = 'none';
+    }
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+
+{%endblock%}

@@ -1,0 +1,358 @@
+{%extends 'base.html'%}
+
+{%block content%}
+{% set footprintform = [
+    {'section':'Food' , 'question':'How would you best describe your diet?', 'answers':'Meat in every meal, Meat in some meals, No beef, Meat very rarely, Vegetarian, Vegan'},
+    {'section':'Food', 'question':'In a week, how much do you spend on food from restaurants, canteens and takeaways?', 'answers':'£0, £1 to £10, £10 to £60, More than 60'},
+    {'section':'Food', 'question': 'Of the food you buy how much is wasted and thrown away?', 'answers':'None, 0% to 10%, 10% to 30%, More than 30%'},
+    {'section':'Food', 'question':'How often do you buy locally produced food that is not imported to the UK?', 'answers': 'A lot of the food I buy is locally sourced, Some of the food I buy is locally sourced, I don\'t worry about where my food comes from'},
+    {'section':'Travel', 'question':'What kind of vehicle do you travel in most often as driver or passenger?', 'answers':'Car, Motorbike, Neither- I walk, cycle or use public transport for my journeys'},
+    {'section':'Travel', 'question':'How many hours a week do you spend on the train for personal use including commuting?', 'answers':'I dont travel by train, Under 2 hours, 2 to 5 hours, 5 to 15 hours, 15 to 25 hours, Over 25 hours'},
+    {'section':'Travel', 'question':'How many hours a week do you spend on the bus for personal use including commuting?', 'answers':'I dont travel by bus, Under 2 hours, 2 to 5 hours, 5 to 15 hours, 15 to 25 hours, Over 25 hours'},
+    {'section':'Travel', 'question':'What percentage of your flights do you offset?', 'answers':'None of them, 25%, 50%, 75%, All of them, Not Applicable'},
+    {'section':'Home', 'question':'What kind of house do you live in?', 'answers': 'Detached, Semi-Detached, Terrace, Flat'},
+    {'section':'Home', 'question':'How many people live in your household?', 'answers':'1, 2, 3, 4, 5 or more'},
+    {'section':'Home', 'question':'What is your main source of heating?', 'answers':'Gas, Electric, Oil, Biomass, Other'},
+    {'section':'Home', 'question':'How much do you spend on energy bills each month?', 'answers':'£0 to £50, £50 to £100, £100 to £200, More than £200'},
+    {'section': 'Misc', 'question': 'placeholder', 'answers': 'placeholder'}
+]%}
+
+{% set section_icon = {
+    'Food': url_for('static', filename='images/food.svg'),
+    'Travel': url_for('static', filename='images/car.svg'),
+    'Home': url_for('static', filename='images/house.svg'),
+    'Misc': url_for('static', filename='images/misc.svg')
+} %}
+
+<div class="container mt-5 footprint-container">
+    <div class="calculator-header">
+        <h1>Carbon Footprint Calculator</h1>
+    </div>
+    
+    <form id="footprintForm" method="POST" action="{{ url_for('api.calculate_footprint') }}">
+        <div class="progress-container">
+            <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+            <span class="progress-text">Question 0 of {{ footprintform | length -1 }}</span>
+        </div>
+
+        {% for question in footprintform %}
+            {% if question.section != 'Misc' %}
+            <div class="question-card" id="question-{{ loop.index }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                <div class="card shadow mb-4">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="section-icon-container">
+                            <img src="{{ section_icon[question['section']] }}" alt="{{ question['section'] }} icon" class="section-icon" width="36">
+                        </div>
+                        <h4 class="mb-0 ms-2">{{ question['section'] }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ question['question'] }}</h5>
+                        <div class="options">
+                            {% set question_index = loop.index %}
+                            {% for answer in question['answers'].split(', ') %}
+                                <div class="option-item">
+                                    <input class="form-check-input" type="radio" name="question_{{ question_index }}" 
+                                           id="q{{ question_index }}_a{{ loop.index }}" value="{{ answer }}" 
+                                           data-section="{{ question['section'] }}" data-question="{{ question['question'] }}">
+                                    <label class="form-check-label" for="q{{ question_index }}_a{{ loop.index }}">
+                                        {{ answer }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        {% if not loop.first %}
+                        <button type="button" class="btn btn-outline-secondary prev-btn" data-question="{{ loop.index }}">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        {% else %}
+                        {% endif %}
+                        
+                        {% if loop.last or loop.index == footprintform|length - 1 %}
+                        <button type="button" class="btn btn-success submit-btn">Calculate Results</button>
+                        {% else %}
+                        <button type="button" class="btn btn-primary next-btn" data-question="{{ loop.index }}">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+        
+        <div id="results-section" style="display: none;">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Your Carbon Footprint Results</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="spinner-border text-success" role="status" id="loading-spinner">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div id="results-content" style="display: none;">
+                        <div class="results-summary text-center mb-4">
+                            <div class="score-container">
+                                <div class="score-circle">
+                                    <span id="score-value">0</span>
+                                    <span class="score-label">/100</span>
+                                </div>
+                                <p class="score-desc">Your Carbon Footprint Score</p>
+                            </div>
+                            <div class="score-gauge">
+                                <div class="progress footprint-progress">
+                                    <div class="progress-bar" role="progressbar" id="footprint-progress" 
+                                         style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="gauge-labels">
+                                    <span class="good">Low Impact</span>
+                                    <span class="medium">Medium</span>
+                                    <span class="high">High Impact</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mt-4">
+                            <p class="mb-1"><small>Lower scores indicate a smaller carbon footprint</small></p>
+                        </div>
+                        
+                        <div id="recommendations" class="mt-4">
+                            <h4>How to Reduce Your Impact:</h4>
+                            <div class="recommendation-card">
+                                <p id="advice-message" class="fs-5"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="results-actions mt-4 d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary" id="retake-btn">
+                                <i class="fas fa-redo"></i> Retake the Quiz
+                            </button>
+                            {% if session.user_id %}
+                            <button type="button" class="btn btn-success" id="save-btn">
+                                <i class="fas fa-save"></i> Save Results
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .footprint-container {
+        max-width: 800px;
+        margin-bottom: 50px;
+    }
+    
+    .calculator-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .progress-container {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .progress {
+        height: 10px;
+        border-radius: 20px;
+    }
+    
+    .progress-text {
+        position: absolute;
+        right: 0;
+        top: -20px;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1rem 1.5rem;
+    }
+    
+    .card-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+        padding: 1rem 1.5rem;
+    }
+    
+    .section-icon-container {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(40, 167, 69, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card-title {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        color: #212529;
+        font-weight: 600;
+    }
+    
+    .options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .option-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .option-item:hover {
+        border-color: #28a745;
+        background-color: rgba(40, 167, 69, 0.05);
+    }
+    
+    .form-check-input {
+        margin-top: 0.3rem;
+    }
+    
+    .form-check-label {
+        margin-left: 10px;
+        font-size: 1.1rem;
+        color: #495057;
+    }
+    
+
+    .results-summary {
+        padding: 2rem 0;
+    }
+    
+    .score-container {
+        margin-bottom: 2rem;
+    }
+    
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #f0f0f0, #ffffff);
+        box-shadow: 8px 8px 16px #e0e0e0, -8px -8px 16px #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 1rem;
+        position: relative;
+    }
+    
+    #score-value {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #28a745;
+    }
+    
+    .score-label {
+        font-size: 1rem;
+        color: #6c757d;
+        position: absolute;
+        bottom: 40px;
+        right: 40px;
+    }
+    
+    .score-desc {
+        font-size: 1.1rem;
+        color: #495057;
+        margin-bottom: 0;
+    }
+    
+    .score-gauge {
+        width: 100%;
+        margin-top: 2rem;
+    }
+    
+    .footprint-progress {
+        height: 15px;
+        border-radius: 20px;
+        margin-bottom: 5px;
+        background: linear-gradient(to right, #28a745, #ffc107, #dc3545);
+    }
+    
+    .footprint-progress .progress-bar {
+        background-color: transparent;
+        position: relative;
+    }
+    
+    .footprint-progress .progress-bar::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        background-color: #fff;
+        border: 2px solid #6c757d;
+        border-radius: 50%;
+    }
+    
+    .gauge-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .recommendation-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    #advice-message {
+        margin-bottom: 0;
+        line-height: 1.6;
+    }
+    
+    @media (max-width: 767px) {
+        .score-circle {
+            width: 120px;
+            height: 120px;
+        }
+        
+        #score-value {
+            font-size: 2.5rem;
+        }
+        
+        .score-label {
+            bottom: 35px;
+            right: 35px;
+        }
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<script src="{{ url_for('static', filename='js/footprint.js') }}"></script>
+{% endblock %}
+
+
+

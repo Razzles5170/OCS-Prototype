@@ -1,0 +1,807 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1&icon_names=basket,droplet,house_gear,lamp,laptop,plus_circle,tree,water,kitchen,microwave,dishwasher,oven,coffee,tv,air,local_laundry_service,dry_cleaning,vacuum,shower,air_freshener,electrical_services,smart_display,thermostat,lightbulb,grass,pool,outdoor_garden,computer,desktop_windows,sports_esports,charger,delete,search,arrow_back,bedroom,add_circle,device_unknown&display=block" rel="stylesheet" />
+
+<div class="tracker-container">
+    <h1>Energy Usage Tracker</h1>
+    
+    <div class="tracker-header">
+        <div class="search-container">
+            <span class="material-symbols-outlined search-icon">search</span>
+            <input type="text" id="search-input" placeholder="Search for a device...">
+        </div>
+        <button id="back-button" class="back-button">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Back to Sections
+        </button>
+        <div id="current-section" class="current-section">All Sections</div>
+    </div>
+    
+
+    <div class="energy-stats-container">
+        <div class="stats-header">
+            <h2>Energy Usage Overview</h2>
+            <div class="timeframe-controls">
+                <button class="timeframe-btn active" data-days="7">Week</button>
+                <button class="timeframe-btn" data-days="30">Month</button>
+                <button class="timeframe-btn" data-days="90">3 Months</button>
+                <button class="timeframe-btn" data-days="365">Year</button>
+            </div>
+        </div>
+        
+        <div class="energy-chart-container">
+            <canvas id="energy-chart"></canvas>
+        </div>
+        
+        <div id="energy-stats" class="energy-stats">
+        </div>
+        
+        <div class="track-usage-container">
+            <button id="track-usage-btn" class="track-usage-btn">
+                <span class="material-symbols-outlined">add_circle</span>
+                Track Today's Usage
+            </button>
+            <p id="tracking-message" class="tracking-message" style="display: none;"></p>
+        </div>
+    </div>
+    
+    <div class="tracker-content">
+        <div id="section-container" class="section-container">
+        </div>
+        
+        <div id="device-container" class="device-container">
+        </div>
+    </div>
+    
+    <div class="added-devices">
+        <h2>Added Devices</h2>
+        <div id="added-devices-container" class="added-devices-list">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    window.DevicesData = [];
+    
+    // my original jinja2 implementation used to show all the sections and icons 
+
+        window.DevicesData = [
+
+            { section: "Kitchen Appliances", name: "Fridge", icon: "kitchen" },
+            { section: "Kitchen Appliances", name: "Microwave", icon: "microwave" },
+            { section: "Kitchen Appliances", name: "Dishwasher", icon: "dishwasher" },
+            { section: "Kitchen Appliances", name: "Oven", icon: "oven" },
+            { section: "Kitchen Appliances", name: "Coffee Maker", icon: "coffee" },
+            
+
+            { section: "Bedroom Devices", name: "Lamp", icon: "lightbulb" },
+            { section: "Bedroom Devices", name: "TV", icon: "tv" },
+            { section: "Bedroom Devices", name: "Air Conditioner", icon: "air" },
+            
+
+            { section: "Laundry & Cleaning", name: "Washing Machine", icon: "local_laundry_service" },
+            { section: "Laundry & Cleaning", name: "Dryer", icon: "dry_cleaning" },
+            { section: "Laundry & Cleaning", name: "Vacuum Cleaner", icon: "vacuum" },
+            
+
+            { section: "Bathroom Utilities", name: "Water Heater", icon: "water" },
+            { section: "Bathroom Utilities", name: "Hair Dryer", icon: "air" },
+            
+
+            { section: "Smart Home", name: "Smart Speaker", icon: "smart_display" },
+            { section: "Smart Home", name: "Smart Thermostat", icon: "thermostat" },
+            { section: "Smart Home", name: "Smart Lights", icon: "lightbulb" },
+            
+
+            { section: "Outdoor & Garden", name: "Lawn Mower", icon: "grass" },
+            { section: "Outdoor & Garden", name: "Pool Pump", icon: "pool" },
+            { section: "Outdoor & Garden", name: "Outdoor Lighting", icon: "outdoor_garden" },
+            
+
+            { section: "General Electronics", name: "Laptop", icon: "laptop" },
+            { section: "General Electronics", name: "Desktop Computer", icon: "computer" },
+            { section: "General Electronics", name: "Game Console", icon: "sports_esports" },
+            { section: "General Electronics", name: "Chargers", icon: "charger" }
+        ];
+</script>
+
+<script src="{{ url_for('static', filename='js/energytracker.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+<style>
+    .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+}
+    .tracker-container {
+    max-width: 1200px;
+    margin: 100px auto 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tracker-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #1F2937;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgb(64, 150, 246);
+}
+
+.tracker-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    max-width: 500px;
+    margin-right: 1rem;
+    margin-bottom: 10px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+}
+
+#search-input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+#search-input:focus {
+    border-color: rgb(64, 150, 246);
+}
+
+.back-button {
+    display: none;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #F3F4F6;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #4B5563;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-right: 1rem;
+}
+
+.back-button:hover {
+    background-color: #E5E7EB;
+}
+
+.back-button .material-symbols-outlined {
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.current-section {
+    font-size: 1.1rem;
+    color: #4B5563;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* Energy Stats & Chart Styles */
+.energy-stats-container {
+    background-color: #F9FAFB;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.stats-header h2 {
+    font-size: 1.5rem;
+    color: #1F2937;
+    margin: 0;
+}
+
+.timeframe-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.timeframe-btn {
+    padding: 6px 12px;
+    background-color: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #4B5563;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.timeframe-btn:hover, .timeframe-btn.active {
+    background-color: rgb(64, 150, 246);
+    color: white;
+    border-color: rgb(64, 150, 246);
+}
+
+.energy-chart-container {
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+.energy-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+.track-usage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.track-usage-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgb(64, 150, 246);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.track-usage-btn:hover {
+    background-color: rgb(46, 129, 223);
+}
+
+.track-usage-btn .material-symbols-outlined {
+    margin-right: 8px;
+}
+
+.tracking-message {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #d1fae5;
+    color: #065f46;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.tracker-content {
+    margin-bottom: 2rem;
+    min-height: 300px;
+}
+
+.section-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.section-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #F9FAFB;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.section-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    background-color: #F3F4F6;
+}
+
+.section-icon {
+    font-size: 40px;
+    color: rgb(64, 150, 246);
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.section-item:hover .section-icon {
+    transform: scale(1.1);
+}
+
+.section-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1F2937;
+}
+
+.device-container {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.device-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background-color: #F9FAFB;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.device-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    background-color: #F3F4F6;
+}
+
+.device-icon {
+    font-size: 30px;
+    color: rgb(64, 150, 246);
+    margin-bottom: 8px;
+    transition: transform 0.2s ease;
+}
+
+.device-item:hover .device-icon {
+    transform: scale(1.1);
+}
+
+.device-name {
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.added-devices {
+    background-color: #F9FAFB;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 2rem;
+}
+
+.added-devices h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #1F2937;
+    border-bottom: 1px solid #E5E7EB;
+    padding-bottom: 10px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #6B7280;
+}
+
+.empty-state .hint {
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.added-device-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: white;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.added-device-item:hover {
+    transform: translateX(5px);
+}
+
+.added-device-info {
+    display: flex;
+    align-items: center;
+    flex: 2;
+    min-width: 200px;
+}
+
+.added-device-info .material-symbols-outlined {
+    font-size: 24px;
+    color: rgb(64, 150, 246);
+    margin-right: 10px;
+}
+
+.added-device-name {
+    font-size: 1rem;
+    color: #1F2937;
+    margin-right: 10px;
+}
+
+.added-device-section {
+    font-size: 0.8rem;
+    color: #6B7280;
+    background-color: #F3F4F6;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.added-device-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 150px;
+}
+
+.device-wattage {
+    font-size: 0.9rem;
+    color: #6B7280;
+    background-color: #F3F4F6;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.device-hours {
+    font-size: 0.9rem;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hours-input {
+    width: 60px;
+    padding: 3px;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+}
+
+.added-device-controls {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #E5E7EB;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: background-color 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #F3F4F6;
+}
+
+.quantity {
+    margin: 0 10px;
+    font-weight: 500;
+    color: #374151;
+    min-width: 20px;
+    text-align: center;
+}
+
+.remove-btn {
+    background-color: #FEE2E2;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+    background-color: #FCA5A5;
+    transform: rotate(90deg);
+}
+
+.remove-btn .material-symbols-outlined {
+    font-size: 18px;
+    color: #DC2626;
+}
+
+/* No results and add custom device */
+.no-results {
+    text-align: center;
+    padding: 30px;
+    color: #6B7280;
+}
+
+.add-custom-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #F3F4F6;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-left: auto;
+    margin-right: auto;
+    color: #4B5563;
+}
+
+.add-custom-btn:hover {
+    background-color: #E5E7EB;
+}
+
+.add-custom-btn .material-symbols-outlined {
+    margin-right: 5px;
+    color: rgb(64, 150, 246);
+}
+
+/* Modal for adding custom device */
+.custom-device-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.custom-device-form {
+    background-color: white;
+    border-radius: 10px;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.custom-device-form h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1F2937;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #4B5563;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-btn,
+.save-btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn {
+    background-color: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    color: #4B5563;
+}
+
+.cancel-btn:hover {
+    background-color: #E5E7EB;
+}
+
+.save-btn {
+    background-color: rgb(64, 150, 246);
+    border: 1px solid rgb(64, 150, 246);
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: rgb(46, 129, 223);
+}
+
+/* Similar devices suggestions */
+.similar-devices {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #E5E7EB;
+}
+
+.similar-devices p {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin-bottom: 10px;
+}
+
+.similar-devices-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.similar-device-btn {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #F3F4F6;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #4B5563;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.similar-device-btn:hover {
+    background-color: #E5E7EB;
+}
+
+.similar-device-btn .material-symbols-outlined {
+    margin-right: 5px;
+    font-size: 18px;
+    color: rgb(64, 150, 246);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tracker-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-container {
+        width: 100%;
+        max-width: none;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .back-button {
+        margin-bottom: 15px;
+    }
+    
+    .section-container,
+    .device-container {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    
+    .added-device-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .added-device-info {
+        margin-bottom: 15px;
+        width: 100%;
+    }
+    
+    .added-device-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-container,
+    .device-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .stats-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .energy-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+{%endblock%}

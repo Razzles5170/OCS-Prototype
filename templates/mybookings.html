@@ -1,0 +1,238 @@
+{%extends 'base.html'%}
+
+{%block content%}
+
+<div class="my-bookings-container">
+    <h1 class="page-title">My Bookings</h1>
+    
+    <div class="booking-tabs">
+        <button class="tab-button active" onclick="filterBookings('all')">All Bookings</button>
+        <button class="tab-button" onclick="filterBookings('consultation')">Consultations</button>
+        <button class="tab-button" onclick="filterBookings('installation')">Installations</button>
+    </div>
+    
+    <div class="bookings-list">
+        {% if bookings %}
+            {% for booking in bookings %}
+                <div class="booking-item" data-type="{{ booking.type|lower }}">
+                    <div class="booking-header">
+                        <h3>{{ booking.type }} Booking</h3>
+                        <span class="booking-status {{ booking.status|lower }}">{{ booking.status }}</span>
+                    </div>
+                    <div class="booking-details">
+                        <div class="booking-info">
+                            <p><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> {{ booking.date }}</p>
+                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ booking.time }}</p>
+                            
+                            {% if booking.type == 'Consultation' and booking.reason %}
+                            <p><i class="fas fa-comment-alt"></i> <strong>Reason:</strong> {{ booking.reason }}</p>
+                            {% endif %}
+                            
+                            {% if booking.type == 'Installation' and booking.address %}
+                            <p><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong> {{ booking.address }}</p>
+                            {% endif %}
+                            
+                            <p class="booking-id"><small>Booking ID: {{ booking.id }}</small></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-bookings">
+                <i class="fas fa-calendar-times no-bookings-icon"></i>
+                <p>No bookings found.</p>
+                <a href="{{ url_for('booking') }}" class="btn book-now-btn">Book Now</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .my-bookings-container {
+        max-width: 900px;
+        margin: 80px auto 50px;
+        padding: 20px;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        color: #1F2937;
+        text-align: center;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #4096F6;
+    }
+    
+    .booking-tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+    
+    .tab-button {
+        padding: 8px 16px;
+        background-color: #F3F4F6;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .tab-button:hover, .tab-button.active {
+        background-color: #4096F6;
+        color: white;
+        border-color: #4096F6;
+    }
+    
+    .bookings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .booking-item {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s ease;
+    }
+    
+    .booking-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .booking-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: #F9FAFB;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .booking-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #1F2937;
+    }
+    
+    .booking-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .booking-status.pending {
+        background-color: #FEF3C7;
+        color: #92400E;
+    }
+    
+    .booking-status.approved {
+        background-color: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .booking-status.rejected {
+        background-color: #FEE2E2;
+        color: #B91C1C;
+    }
+    
+    .booking-details {
+        padding: 20px;
+    }
+    
+    .booking-info p {
+        margin: 10px 0;
+        color: #4B5563;
+    }
+    
+    .booking-info i {
+        margin-right: 8px;
+        color: #6B7280;
+    }
+    
+    .booking-id {
+        color: #9CA3AF !important;
+        margin-top: 20px !important;
+    }
+    
+    .no-bookings {
+        text-align: center;
+        padding: 50px 0;
+    }
+    
+    .no-bookings-icon {
+        font-size: 4rem;
+        color: #9CA3AF;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+    
+    .no-bookings p {
+        font-size: 1.2rem;
+        color: #6B7280;
+        margin-bottom: 20px;
+    }
+    
+    .book-now-btn {
+        background-color: #4096F6;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+    
+    .book-now-btn:hover {
+        background-color: #2E81DF;
+    }
+    
+    @media (max-width: 768px) {
+        .booking-tabs {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .booking-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .booking-status {
+            align-self: flex-start;
+        }
+    }
+</style>
+
+<script>
+    function filterBookings(type) {
+        // Update active tab
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Filter bookings
+        document.querySelectorAll('.booking-item').forEach(booking => {
+            if (type === 'all' || booking.dataset.type === type) {
+                booking.style.display = 'block';
+            } else {
+                booking.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+{%endblock%}

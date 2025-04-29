@@ -1,0 +1,56 @@
+{%set accessibility_menu_options=[
+    {'Option': 'TextSize','Icon': url_for('static', filename='images/text-size.svg')},
+    {'Option': 'ScreenReader','Icon': url_for('static', filename='images/screen-reader.svg')},
+    {'Option': 'ColourBlind','Icon': url_for('static', filename='images/colour-blind.svg')},
+    {'Option': 'ScreenMask','Icon': url_for('static', filename='images/screen-mask.svg')},
+    {'Option': 'Translate','Icon': url_for('static', filename='images/translate.svg')},
+    {'Option': 'Settings','Icon': url_for('static', filename='images/settings.svg')},
+]%}
+<div class="accessibility-wrapper">
+    <button class="AccessibilityMenu" ><img src="{{ url_for('static', filename='images/accessibility-menu.svg') }}" alt="Accessibility Menu"></button>
+    <!-- create a radial menu for the accessibility options-->
+
+    <ul class="radialMenu" style = "display:none">
+        {% for option in accessibility_menu_options %}
+        <div class = "Options-Selection">
+            <button>
+                <img src="{{ option.Icon }}" alt="{{ option.Option }}" aria-label="{{ option.Option }}" class="{{ option.Option }}" onclick="toggleOption('{{ option.Option }}')">
+            </button>
+        </div> 
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="screen-mask" id="screen-mask">
+    <div class="highlight" id="highlight"></div>
+</div>
+
+<!--text size commented out in all areas until its fully working (will get working on it after footpint calcualtor and booking are finished)-->
+<!--<div class="text-size" id="text-size">
+    <div class="text-size-option" id="text-size-option">
+        <button onclick="increasetextsize()" class="text-size-button" id="text-size-increase"><img src="{{ url_for('static', filename='images/increasetextsize.svg') }}" alt="Accessibility Menu"></button>
+        <button onclick="decreasetextsize()" class="text-size-button" id="text-size-decrease"><img src="{{ url_for('static', filename='images/decreasetextsize.svg') }}" alt="Accessibility Menu"></button>
+    </div>
+</div>-->
+
+<div class="settings-modal" style="display:none" id="settings-modal">
+    <div class="settings-content">
+        <h2>Settings</h2>
+        <button class="close-button" id="close-button" onclick="closeSettings()">X</button>
+        <div class="settings-options">
+            <!--dropdown for a list of fonts, I have checked they are accessible and have a dyslexia friendly font too-->
+            <label for="font-select">Select Font:</label>
+            <select id="font-select" onchange="changeFont(this.value)">
+                <option value="Arial">Arial</option>
+                <option value="OpenDyslexic">Dyslexic</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="San Francisco">San Francisco</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script src="{{url_for('static',filename='js/accessibilitymenu.js')}}"></script> <!-- this adds a onclick event for the toggle of the accessibility options as well as handling the accessibility options-->

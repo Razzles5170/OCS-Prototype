@@ -1,0 +1,1104 @@
+/* I have removed CSS that only is used in ONE file and have left CSS that is used over multiple files this is better for code organisation and readability all css that was used in one file is now in a style tag in the html file */
+/* Navbar Start */
+nav {
+    text-decoration: none;
+    background-color: rgb(64, 150, 246,0.7);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 0.5rem 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo{
+    height: 60px;
+    width:auto;
+    position: left;
+}
+
+.nav-text{
+    text-decoration:none;
+    color: rgb(255, 255, 255);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background-color: rgb(246, 160, 64);
+    border: 1px solid rgb(246, 160, 64);
+}
+
+.nav-text:hover{
+    background-color: rgb(240, 137, 20);
+    border: 1px solid rgb(246, 160, 64);
+}
+
+.login{
+    text-decoration:none;
+    color: rgb(255, 255, 255);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    position: right;
+    border-radius: 6px;
+    background-color: rgb(246, 160, 64);
+    border: 1px solid rgb(246, 160, 64);
+}
+
+.login:hover{
+    background-color: rgb(240, 137, 20);
+    border: 1px solid rgb(246, 160, 64);
+}
+
+.SignUp{
+    text-decoration:none;
+    color: rgb(255, 255, 255);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    position: right;
+    border-radius: 6px;
+    background-color: rgb(26, 74, 128);
+    border: 1px solid rgb(26, 74, 128);
+}
+
+.SignUp:hover{
+    background-color: rgb(17, 49, 87);
+    border: 1px solid rgb(17, 49, 87);
+}
+
+/* Mobile Navigation */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+    z-index: 1002;
+}
+
+.hamburger-menu span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: white;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.nav-items {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin: 0 20px; /* Add spacing from the logo */
+}
+
+/* Desktop-specific navigation styles */
+@media screen and (min-width: 901px) {
+    .nav-items {
+        justify-content: space-between;
+    }
+    
+    .nav-items a {
+        margin: 0 5px;
+    }
+    
+    .nav-auth, .profile-dropdown {
+        margin-left: auto; /* Push login/signup or profile to the right */
+        display: flex;
+        align-items: center;
+    }
+    
+    .nav-auth a {
+        margin-left: 10px;
+    }
+}
+
+/* Media Queries for Responsive Navigation */
+@media screen and (max-width: 900px) {
+    .hamburger-menu {
+        display: flex;
+        margin-right: 15px;
+    }
+    
+    .nav-items {
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        width: 80%;
+        height: calc(100vh - 60px);
+        background-color: rgba(64, 150, 246, 0.95);
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 20px;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+        z-index: 1000;
+        margin: 0;
+    }
+    
+    .nav-items.active {
+        left: 0;
+    }
+    
+    .nav-items a {
+        margin: 10px 0;
+        width: 100%;
+    }
+    
+    .nav-text {
+        display: block;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    
+    .nav-auth {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .login, .SignUp {
+        display: block;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    
+    /* Animation for hamburger to X */
+    .hamburger-menu.active span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+    
+    .hamburger-menu.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .hamburger-menu.active span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+    
+    /* Profile dropdown adjustments for mobile */
+    .profile-dropdown {
+        margin: 10px 0;
+    }
+}
+
+/* Overlay for mobile menu */
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.menu-overlay.active {
+    display: block;
+}
+
+/* Home page Start */
+
+
+/*Home Page End*/
+
+
+/*Login + Regiser Page Start*/
+
+.AuthForm{
+    display: flex;
+    flex-direction: column;
+    align-items: 60%;
+    justify-content: 60%;
+    margin-top: 10rem;
+    margin-left: 5rem;
+}
+
+.Authtitle{
+    align-content: center;
+    justify-content: center;
+    margin: auto;
+}
+.form-inputboxes {
+    margin-bottom: 1.5rem;
+    text-align: left;
+    margin: auto;
+    width: 500px;
+}
+
+.form-inputboxes label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-inputboxes input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 50%;
+    border-radius: 0.375rem;
+    font-size: 1rem;;
+}
+
+.form-inputboxes input:focus {
+    outline: none;
+    border-color: rgb(64, 150, 246);
+}
+
+.form-inputboxes button {
+    width: 100%;
+    padding: 12px;
+    background-color: #000000;
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.form-inputboxes button:hover {
+    background-color:rgb(46, 46, 46);
+}
+
+
+.OAuth{
+    margin-bottom: 1.5rem;
+    text-align: center;
+    margin: auto;
+    width: 800px;
+}
+.google-oauth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+    margin: 10px auto;
+    padding: 12px;
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(0, 0, 0);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;
+}
+.google-oauth:hover {
+    background-color:rgb(46, 46, 46);
+}
+
+
+.google-logo{
+    width: 30px;
+    height: 30px;
+    margin-right: 0.5rem;
+}
+/*Login + Register Page End*/
+
+/*Toast Notification Start*/
+.flash-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    flex-direction: column;
+
+}
+
+.flash-popup {
+    background-color: rgb(64, 150, 246);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(64, 150, 246, 0.1);
+    min-width: 300px;
+    position: relative;
+}
+
+.close-btn {
+    font-size: 40px;
+    color: #333;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/*Toast Notification End*/
+
+/*Profile Dropdown + PFP Start*/
+
+.profile-picture{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    pointer-events: auto;
+}
+
+.dropdown-link {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #4B5563;
+    font-size: 0.875rem;
+}
+
+.dropdown-link:hover {
+    background-color: #f4f4f4;
+    color: #1F2937;
+}
+
+
+.profile-dropdown:focus-within .dropdown-menu {
+    display: block;
+    animation: fade-in 0.3s ease-in-out;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+.dropdown-link:hover {
+    background-color: #f4f4f4;
+    color: #1F2937;
+}
+/*Profile Dropdown End*/
+
+/*Carbon Footprint Calculator Start*/
+
+.icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 80%;
+    text-align: center;
+    line-height: 40px;
+    vertical-align: middle;
+    padding: 0;
+}
+
+.icon.Food {
+    background-color: #1F2937;
+}
+
+.icon.Travel {
+    background-color: #4A90E2;
+}
+
+.icon.Home {
+    background-color: #E94E77;
+}
+
+
+/*Carbon Footprint Calculator End*/
+
+
+
+
+/* Radial Accessibility Menu */
+.AccessibilityMenu{
+    position: fixed;
+    bottom: 29%;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #027aff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.AccessibilityMenu:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.AccessibilityMenu img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin: 0;
+    padding: 0;
+}
+
+
+.Options-Selection {
+    position: absolute;
+    pointer-events: auto;
+    z-index: 10001; 
+}
+
+.Options-Selection button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: none;
+    padding: 0;
+    margin: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.Options-Selection button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.Options-Selection button img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.radialMenu {
+    position: fixed;
+    bottom: 30%;
+    right: 20px;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: 10001;
+}
+
+
+
+.Options-Selection:nth-child(1) button { background-color: #E94E77; }
+.Options-Selection:nth-child(2) button { background-color: #4A90E2; }
+.Options-Selection:nth-child(3) button { background-color: #F5A623; }
+.Options-Selection:nth-child(4) button { background-color: #7ED321; }
+.Options-Selection:nth-child(5) button { background-color: #9013FE; }
+.Options-Selection:nth-child(6) button { background-color: #D0021B; }
+
+
+
+.Options-Selection:nth-child(1) { transform: translate(75px, 30px); }
+.Options-Selection:nth-child(2) { transform: translate(20px, 40px); }
+.Options-Selection:nth-child(3) { transform: translate(-20px, 80px); }
+.Options-Selection:nth-child(4) { transform: translate(-20px, 140px); }
+.Options-Selection:nth-child(5) { transform: translate(20px, 180px); }
+.Options-Selection:nth-child(6) { transform: translate(75px, 200px); }
+
+
+.screen-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    display: none;
+}
+
+.screen-mask.active {
+    opacity: 1;
+    pointer-events: all;
+    display: block;
+}
+
+.highlight {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background-color: transparent;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+    z-index: 10000;
+}
+
+/*.text-size {
+    position: fixed;
+    bottom: 30%;
+    left: 20px;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+
+
+}
+
+.text-size-option {
+    position: absolute;
+    pointer-events: auto;
+    z-index: 10001; 
+}
+.text-size-option button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: none;
+    padding: 0;
+    margin: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+
+
+/* Settings Modal Styles */
+.settings-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-modal[style="display:block"] {
+    display: flex !important;
+}
+
+.settings-content {
+    background-color: white;
+    border-radius: 10px;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: fadeIn 0.3s ease;
+}
+
+.settings-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #1F2937;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgb(64, 150, 246);
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #4B5563;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+    background-color: #F3F4F6;
+}
+
+.settings-options {
+    margin-top: 20px;
+}
+
+.settings-options label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.settings-options select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s ease;
+    margin-bottom: 15px;
+}
+
+.settings-options select:focus {
+    border-color: rgb(64, 150, 246);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(64, 150, 246, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .settings-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+/* Accessibility wrapper to fix structure */
+.accessibility-wrapper {
+    position: fixed;
+    bottom: 29%;
+    right: 20px;
+    z-index: 1000;
+}
+
+
+/*Footer Start*/
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0; 
+    overflow-x: hidden; 
+}
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    background-color: #002952;
+    border-top: 1px solid #000000;
+    width: 100%;
+    box-sizing: border-box;
+    color: white;
+}
+
+.footer-logo img {
+    width: 80px;
+    height: auto;
+}
+
+.footer-text {
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.footer-social img {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s ease;
+}
+
+.footer-social img:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .CTA-Text {
+        font-size: 2.5rem;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .footer-links {
+        justify-content: center;
+    }
+}
+
+
+    
+/* ERROR 404 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Accessibility Statement Policy */
+
+
+
+
+/* Contant Us */
+
+
+/* Terms of Service */
+
+
+
+/* Energy Tracker */
+
+
+
+
+
+
+
+
+/* Alert messages */
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.alert-danger {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+}
+
+/* Admin Dashboard Styles */
+.admin-container {
+    max-width: 1200px;
+    margin: 100px auto 50px;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid rgb(64, 150, 246);
+    padding-bottom: 15px;
+}
+
+.admin-header h1 {
+    font-size: 2rem;
+    color: #1F2937;
+    margin: 0;
+}
+
+.admin-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.admin-tabs a {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    color: #4B5563;
+    cursor: pointer;
+    margin: 0 10px;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.admin-tabs a:hover {
+    color: rgb(64, 150, 246);
+}
+
+.admin-tabs a.active {
+    color: rgb(64, 150, 246);
+    border-bottom: 3px solid rgb(64, 150, 246);
+}
+
+.admin-panel {
+    padding: 20px;
+    background-color: #F9FAFB;
+    border-radius: 8px;
+}
+
+.admin-panel h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #1F2937;
+}
+
+.availability-container {
+    margin-top: 20px;
+}
+
+.date-selector {
+    margin-bottom: 20px;
+}
+
+.date-selector label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.time-slot {
+    padding: 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.time-slot input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.time-slot.available {
+    background-color: #D1FAE5;
+    border-color: #A7F3D0;
+}
+
+.time-slot.booked {
+    background-color: #FEE2E2;
+    border-color: #FECACA;
+    opacity: 0.7;
+}
+
+.save-availability {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: rgb(64, 150, 246);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.save-availability:hover {
+    background-color: rgb(46, 129, 223);
+}
+
+.booking-list {
+    margin-top: 20px;
+}
+
+.booking-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.booking-info {
+    flex-grow: 1;
+}
+
+.booking-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: #1F2937;
+}
+
+.booking-info p {
+    margin: 3px 0;
+    color: #4B5563;
+    font-size: 0.9rem;
+}
+
+.booking-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.booking-actions button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.approve-btn {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.approve-btn:hover {
+    background-color: #A7F3D0;
+}
+
+.reject-btn {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+}
+
+.reject-btn:hover {
+    background-color: #FECACA;
+}
+
+.admin-login-container {
+    max-width: 500px;
+    margin: 120px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.admin-login-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #1F2937;
+    text-align: center;
+}
+
+.admin-login-form {
+    margin-top: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .admin-container, .booking-container {
+        padding: 20px;
+        margin: 80px auto 30px;
+    }
+    
+    .admin-tabs a, .option-select a {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .admin-header h1 {
+        margin-bottom: 15px;
+    }
+    
+    .time-slots {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    
+    .booking-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .booking-actions {
+        margin-top: 15px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-tabs, .option-select {
+        flex-direction: column;
+    }
+    
+    .admin-tabs a, .option-select a {
+        margin: 5px 0;
+        text-align: center;
+    }
+}
+/*Booking End*/
+
+
+/* About Us*/
+

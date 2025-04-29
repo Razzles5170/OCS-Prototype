@@ -1,0 +1,128 @@
+{%extends 'base.html'%}
+
+{% block content%}
+
+<div class="ContactForm-container">
+    <div class="ContactForm">
+        <h1>Contact Us</h1>
+        {% if success_message %}
+        <div class="success-message">{{ success_message }}</div>
+        {% endif %}
+        <form action="{{ url_for('contact_us') }}" method="POST" id="contactForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="{{ session.get('firstname', '') }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{ session.get('email', '') }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn">Send</button>
+        </form>
+    </div>
+</div>
+
+
+<style>
+
+.ContactForm-container {
+    margin: 8rem auto 4rem auto;
+    padding: 2rem;
+    max-width: 1200px; 
+    width: 90%; 
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(64, 150, 246, 0.2);
+}
+
+
+.ContactForm {
+    width: 100%;
+}
+
+.ContactForm h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: #1F2937;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgb(64, 150, 246);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.ContactForm label {
+    display: block;
+    font-size: 1rem;
+    color: #4B5563;
+    margin-bottom: 0.5rem;
+}
+
+.ContactForm input, .ContactForm textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #D1D5DB;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #4B5563;
+}
+
+.ContactForm button {
+    background-color: rgb(64, 150, 246);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.ContactForm button:hover {
+    background-color: rgb(26, 74, 128);
+}
+
+.ContactForm button:disabled {
+    background-color: #D1D5DB;
+    cursor: not-allowed;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    text-align: center;
+}
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(event) {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                event.preventDefault();
+                alert('Please fill out all fields');
+            }
+        });
+    });
+</script>
+
+{% endblock%}

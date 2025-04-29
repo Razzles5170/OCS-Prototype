@@ -1,0 +1,72 @@
+{%extends 'base.html'%}
+
+{%block content%}
+
+<div class="ToS-container">
+    <h1>Terms of Service</h1>
+    <div class="ToS">
+        <p>By using our service(s) you agree that</p>
+        <h2>Acceptance of Terms</h2>
+        <p>By accessing or using our services, you agree to be bound by these terms.</p>
+        <h2>Changes to Terms</h2>
+        <p>We may modify these terms at any time, and your continued use of the services constitutes acceptance of the new terms.</p>
+        <h2>Contact Information</h2>
+        <p>If you have any questions about these terms, please contact us.</p>
+        <h2>Governing Law</h2>
+        <p>These terms shall be governed by the laws of the jurisdiction in which we operate.</p>
+        <h2>Severability</h2>
+        <p>If any provision of these terms is found to be unenforceable, the remaining provisions will remain in effect.</p>
+        <h2>Contact Information</h2>
+        <p>If you have any questions about these terms, please <a href="{{ url_for('contact_us') }}">contact us.</a></p>
+    </div>
+</div>
+
+<style>
+    .ToS-container {
+    margin: 8rem auto 4rem auto;
+    padding: 2rem;
+    max-width: 800px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(64, 150, 246, 0.2);
+}
+
+.ToS h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: #1F2937;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgb(64, 150, 246);
+}
+
+.ToS h2 {
+    font-size: 1.5rem;
+    margin-top: 1.8rem;
+    margin-bottom: 1rem;
+    color: #374151;
+}
+
+.ToS p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4B5563;
+    margin-bottom: 1rem;
+}
+
+.ToS a {
+    color: rgb(64, 150, 246);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.ToS a:hover {
+    color: rgb(26, 74, 128);
+    text-decoration: underline;
+}
+</style>
+
+
+{%endblock%}

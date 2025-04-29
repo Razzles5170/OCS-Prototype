@@ -1,0 +1,63 @@
+{% extends 'base.html'%}
+
+{%block content%}
+
+<div class="AccessibilityStatement-container">
+    <h1>Accessibility Statement</h1>
+    <div class="AccessibilityStatement">
+
+
+        <p>ROLSA Technologies is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.</p>
+        <p>We aim to adhere to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA standards. These guidelines explain how to make web content more accessible for people with disabilities and user-friendly for everyone.</p>
+        <p>We are actively working to improve our website's accessibility and usability, and we welcome feedback on how we can enhance the experience for all users.</p>
+        <p>Feel free to <a href="{{url_for('contact_us')}}" class="AS-ContantLink">Contact Us</a> if you have any questions or suggestions regarding the accessibility of our website.</p>
+    </div>
+</div>
+<style>
+    .AccessibilityStatement-container {
+    margin: 8rem auto 4rem auto;
+    padding: 2rem;
+    max-width: 800px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(64, 150, 246, 0.2);
+}
+
+.AccessibilityStatement h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: #1F2937;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgb(64, 150, 246);
+}
+
+.AccessibilityStatement h2 {
+    font-size: 1.5rem;
+    margin-top: 1.8rem;
+    margin-bottom: 1rem;
+    color: #374151;
+}
+
+.AccessibilityStatement p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4B5563;
+    margin-bottom: 1rem;
+}
+
+.AccessibilityStatement a {
+    color: rgb(64, 150, 246);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.AccessibilityStatement a:hover {
+    color: rgb(26, 74, 128);
+    text-decoration: underline;
+}
+</style>
+
+{%endblock%}

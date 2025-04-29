@@ -1,0 +1,42 @@
+{%extends 'base.html'%}
+{%block content%}
+
+<div class= "AuthForm"> 
+    <h1 class ="Authtitle">Create an account</h1>
+    <form action = "{{url_for('auth.register')}}" method = "POST">
+        <div class="form-inputboxes">
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" placeholder="John" required onkeydown="return event.keyCode !== 32;">
+
+        <label for="email">Email</label>
+        <input type="email" name="email" placeholder="example@example.com" required>
+
+        <label for="confirmemail">Confirm Email</label>
+        <input type="text" name="email2" placeholder="example@example.com" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="" required>
+
+        <label for="confirmpassword">Confirm Password</label>
+        <input type="password" name="password2" placeholder="" required>
+
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+            <label class="form-check-label" for="remember_me">Remember Me</label>
+        </div>
+        
+
+        <button type="submit" >Sign Up</button>
+    </form>
+</div>
+<div class ="OAuth">
+    <h2>Or Sign Up with</h2>
+    <a href="{{url_for('auth.google_login')}}" class="google-oauth">
+        <img src="{{url_for('static',filename='images/google-logo.png')}}" alt="Google Sign In" class="google-logo">
+        <span>Sign Up with Google</span>
+    </a>
+</div>
+
+
+
+{%endblock%}

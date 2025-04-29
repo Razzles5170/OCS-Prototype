@@ -1,0 +1,120 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Manage Availability</h1>
+        <div class="header-actions">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>
+    
+    {% if request.args.get('success') %}
+    <div class="alert alert-success">
+        Availability settings saved successfully!
+    </div>
+    {% endif %}
+    
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <div class="admin-panel">
+        <h2>Set Available Time Slots</h2>
+        
+        <div class="availability-container">
+            <form method="POST" action="{{ url_for('admin_update_availability') }}">
+                <div class="date-selector">
+                    <label for="availability-date">Select Date:</label>
+                    <input type="date" id="availability-date" name="date" min="{{ today }}" value="{{ selected_date or today }}" class="form-control">
+                    <button type="submit" name="action" value="load" class="btn btn-secondary mt-2">Load Availability</button>
+                </div>
+                
+                <div class="time-slots mt-4">
+                    <h3>Available Time Slots for {{ selected_date or today }}</h3>
+                    {% for slot in default_slots %}
+                    <div class="time-slot">
+                        <input type="checkbox" id="slot-{{ slot }}" name="selected_slots" value="{{ slot }}"
+                               {% if slot in current_slots %}checked{% endif %}>
+                        <label for="slot-{{ slot }}">{{ slot }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <button type="submit" name="action" value="save" class="save-availability btn btn-primary mt-3">
+                    Save Availability
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Display existing availability -->
+    {% if custom_availability %}
+    <div class="admin-panel mt-4">
+        <h2>Custom Availability Settings</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Available Slots</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for date, slots in custom_availability.items() %}
+                <tr>
+                    <td>{{ date }}</td>
+                    <td>{{ slots|join(', ') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .time-slot {
+        margin-bottom: 10px;
+    }
+    
+    .time-slot label {
+        margin-left: 8px;
+        font-weight: normal;
+    }
+    
+    .admin-panel {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .alert {
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+    
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+</style>
+{% endblock %}

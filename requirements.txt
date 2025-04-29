@@ -1,0 +1,8 @@
+flask
+flask-session
+bcrypt
+requests
+python-dotenv
+uuid
+flask-wtf
+wtforms
