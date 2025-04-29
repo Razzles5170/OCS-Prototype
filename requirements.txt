@@ -1,8 +1,9 @@
 flask
 flask-session
-bcrypt
+bcrypt==3.2.0
 requests
 python-dotenv
 uuid
 flask-wtf
 wtforms
+gunicorn==20.1.0
