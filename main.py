@@ -472,7 +472,7 @@ def mark_message_read(message_id):
 
 @app.route('/info')
 def info():
-    return render_template("info.html")
+    return render_template("Info.html")
 
 @app.route('/footprint')
 def footprint():
