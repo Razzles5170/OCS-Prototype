@@ -4,10 +4,25 @@ import uuid
 import sqlite3
 import json
 from datetime import datetime, timedelta
+import os
 
 app = Flask(__name__)
 secret_key = uuid.uuid4().hex
 app.secret_key = secret_key
+
+# Configure for production (CapRover) environment
+# This properly handles requests passing through proxies (which CapRover uses)
+from werkzeug.middleware.proxy_fix import ProxyFix
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+# Update session cookie settings based on environment
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config.update(
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+        # Do NOT set PREFERRED_URL_SCHEME as it can cause redirect loops
+    )
 
 # import for the auth blueprint
 from auth import auth_bp
@@ -17,14 +32,33 @@ app.register_blueprint(auth_bp)
 from api import api_bp
 app.register_blueprint(api_bp)
 
-#login required function made so that users will be directed to the login page if a session is not found
+# login required function with improved redirect loop detection
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
+            # Store the requested URL for redirecting after login
+            if request.method == 'GET' and '/api/' not in request.path:
+                session['next'] = request.url
+            
+            # Add a flag to prevent potential redirect loops
+            if session.get('login_redirect_count', 0) > 3:
+                # If too many redirects, show error page instead
+                return render_template('404.html', 
+                                     error="Authentication error. Please clear cookies and try again."), 401
+            
+            # Increment the counter
+            session['login_redirect_count'] = session.get('login_redirect_count', 0) + 1
+            
             return redirect(url_for('auth.login'))
+        
+        # Reset counter on successful access
+        if 'login_redirect_count' in session:
+            session.pop('login_redirect_count')
+            
         return f(*args, **kwargs)
     return decorated_function
+
 # only admins can access the admin pages...
 def admin_required(f):
     @wraps(f)
@@ -503,5 +537,5 @@ def check_consultation_status():
         return jsonify({"has_approved_consultation": False, "error": str(e)}), 500
 # for hosting purposes, this function is used to run the app on a specific port and host
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
